@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,16 +11,23 @@ use Illuminate\View\View;
 
 class LaporanController extends Controller
 {
+    // Menampilkan halaman laporan
     public function index(Request $request): View
     {
-        $daftarPesanan = $this->pesananTerfilter($request)->latest()->get();
+        $daftarPesanan = $this->pesananTerfilter($request)
+            ->latest()
+            ->get();
 
-        // Kartu ringkasan: dihitung dari seluruh pesanan.
+        // Menghitung total pesanan
         $totalPesanan = Pesanan::count();
 
-        $pendapatan = Pesanan::where('status', Pesanan::LUNAS)
-            ->sum('total');
+        // Menghitung pendapatan dari pesanan lunas
+        $pendapatan = Pesanan::where(
+            'status',
+            Pesanan::LUNAS
+        )->sum('total');
 
+        // Menghitung jumlah berdasarkan status
         $perStatus = Pesanan::select(
             'status',
             DB::raw('count(*) as jumlah')
@@ -35,7 +43,26 @@ class LaporanController extends Controller
         ));
     }
 
-    // Satu sumber filter untuk dashboard dan PDF.
+    // Mengunduh laporan dalam bentuk PDF
+    public function pdf(Request $request)
+    {
+        $daftarPesanan = $this->pesananTerfilter($request)
+            ->latest()
+            ->get();
+
+        $pendapatan = $daftarPesanan
+            ->where('status', Pesanan::LUNAS)
+            ->sum('total');
+
+        $pdf = Pdf::loadView(
+            'laporan-pdf',
+            compact('daftarPesanan', 'pendapatan')
+        )->setPaper('a4', 'portrait');
+
+        return $pdf->download('laporan-pesanan.pdf');
+    }
+
+    // Filter pesanan berdasarkan status dan tanggal
     private function pesananTerfilter(Request $request): Builder
     {
         return Pesanan::with('konser')
