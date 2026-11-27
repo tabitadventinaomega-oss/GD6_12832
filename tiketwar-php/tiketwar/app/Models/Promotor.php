@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Promotor extends Model
 {
-    protected $fillable = ['nama'];
+    protected $fillable = [
+        'nama',
+        'kontak'
+    ];
 
     public function konsers(): HasMany
     {
