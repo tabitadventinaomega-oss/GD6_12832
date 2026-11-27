@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -12,6 +13,15 @@ use Illuminate\Validation\ValidationException;
 
 class PesananController extends Controller
 {
+    // Menampilkan semua pesanan terbaru (khusus admin).
+    public function index()
+    {
+        return PesananResource::collection(
+            Pesanan::latest()->get()
+        );
+    }
+
+    // Membuat pesanan melalui API.
     public function store(Request $request, Konser $konser): JsonResponse
     {
         $data = $request->validate([
