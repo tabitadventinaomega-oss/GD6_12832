@@ -72,5 +72,6 @@ class DatabaseSeeder extends Seeder
 
         // Menjalankan seeder pesanan setelah data konser dibuat
         $this->call(PesananSeeder::class);
+        $this->call(AdminSeeder::class);
     }
 }

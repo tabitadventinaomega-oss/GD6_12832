@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\KonserController;
 use App\Http\Controllers\PesananController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Route;
 
+// Halaman publik
 Route::view('/', 'home')->name('home');
 
 Route::view('/tentang', 'about')->name('tentang');
@@ -12,28 +14,11 @@ Route::view('/tentang', 'about')->name('tentang');
 Route::get('/konser', [KonserController::class, 'index'])
     ->name('konser.index');
 
-Route::get('/konser/create', [KonserController::class, 'create'])
-    ->name('konser.create');
-
-Route::post('/konser', [KonserController::class, 'store'])
-    ->name('konser.store');
-
 Route::get('/konser/{id}', [KonserController::class, 'show'])
     ->whereNumber('id')
     ->name('konser.detail');
 
-Route::get('/konser/{id}/edit', [KonserController::class, 'edit'])
-    ->whereNumber('id')
-    ->name('konser.edit');
-
-Route::put('/konser/{id}', [KonserController::class, 'update'])
-    ->whereNumber('id')
-    ->name('konser.update');
-
-Route::delete('/konser/{id}', [KonserController::class, 'destroy'])
-    ->whereNumber('id')
-    ->name('konser.destroy');
-
+// Pemesanan tiket oleh pengunjung
 Route::get('/konser/{konser}/pesan', [PesananController::class, 'create'])
     ->whereNumber('konser')
     ->name('pesanan.create');
@@ -42,19 +27,57 @@ Route::post('/konser/{konser}/pesan', [PesananController::class, 'store'])
     ->whereNumber('konser')
     ->name('pesanan.store');
 
-Route::get('/pesanan', [PesananController::class, 'index'])
-    ->name('pesanan.index');
+// Login dan logout
+Route::get('/login', [AuthController::class, 'showLogin'])
+    ->middleware('guest')
+    ->name('login');
 
-Route::patch('/pesanan/{pesanan}/bayar', [PesananController::class, 'bayar'])
-    ->whereNumber('pesanan')
-    ->name('pesanan.bayar');
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('guest')
+    ->name('login.proses');
 
-Route::patch('/pesanan/{pesanan}/batal', [PesananController::class, 'batal'])
-    ->whereNumber('pesanan')
-    ->name('pesanan.batal');
+// Halaman khusus admin
+Route::middleware('auth')->group(function () {
 
-Route::get('/laporan', [LaporanController::class, 'index'])
-    ->name('laporan.index');
-    
-Route::get('/laporan/pdf', [LaporanController::class, 'pdf'])
-    ->name('laporan.pdf');
+    // Kelola konser
+    Route::get('/konser/create', [KonserController::class, 'create'])
+        ->name('konser.create');
+
+    Route::post('/konser', [KonserController::class, 'store'])
+        ->name('konser.store');
+
+    Route::get('/konser/{id}/edit', [KonserController::class, 'edit'])
+        ->whereNumber('id')
+        ->name('konser.edit');
+
+    Route::put('/konser/{id}', [KonserController::class, 'update'])
+        ->whereNumber('id')
+        ->name('konser.update');
+
+    Route::delete('/konser/{id}', [KonserController::class, 'destroy'])
+        ->whereNumber('id')
+        ->name('konser.destroy');
+
+    // Kelola pesanan
+    Route::get('/pesanan', [PesananController::class, 'index'])
+        ->name('pesanan.index');
+
+    Route::patch('/pesanan/{pesanan}/bayar', [PesananController::class, 'bayar'])
+        ->whereNumber('pesanan')
+        ->name('pesanan.bayar');
+
+    Route::patch('/pesanan/{pesanan}/batal', [PesananController::class, 'batal'])
+        ->whereNumber('pesanan')
+        ->name('pesanan.batal');
+
+    // Laporan
+    Route::get('/laporan', [LaporanController::class, 'index'])
+        ->name('laporan.index');
+
+    Route::get('/laporan/pdf', [LaporanController::class, 'pdf'])
+        ->name('laporan.pdf');
+
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
+});
