@@ -10,12 +10,16 @@ return new class extends Migration
     {
         Schema::create('konsers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('promotor_id')->constrained()->restrictOnDelete();
+            $table->foreignId('promotor_id')
+                ->constrained()
+                ->restrictOnDelete();
+
             $table->string('nama');
             $table->string('kota');
             $table->unsignedInteger('harga');
             $table->unsignedInteger('sisa');
             $table->date('tanggal');
+
             $table->timestamps();
         });
     }
