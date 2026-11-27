@@ -15,7 +15,7 @@
     <p>Sisa tiket: {{ $konser->sisa }}</p>
 
     @if ($konser->sisa > 0)
-        <button type="button">War Tiket Sekarang</button>
+        <a href="{{ route('pesanan.create', $konser) }}">War Tiket Sekarang</a>
     @else
         <button type="button" disabled>Sold Out</button>
     @endif
