@@ -10,55 +10,67 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $global = Promotor::firstOrCreate(['nama' => 'Global Music']);
-        $nusantara = Promotor::firstOrCreate(['nama' => 'Nusantara Live']);
-        $harmoni = Promotor::firstOrCreate(['nama' => 'Harmoni Musik']);
+        $nusantara = Promotor::create([
+            'nama' => 'Nusantara Live',
+            'kontak' => 'kontak@nusantaralive.test',
+        ]);
 
-        $konser = [
-            [
-                'promotor_id' => $global->id,
-                'nama' => 'Coldplay - Music of the Spheres',
-                'kota' => 'Jakarta',
-                'harga' => 1500000,
-                'sisa' => 100,
-                'tanggal' => '2027-01-10',
-            ],
-            [
-                'promotor_id' => $global->id,
-                'nama' => 'NCT Dream',
-                'kota' => 'Jakarta',
-                'harga' => 1250000,
-                'sisa' => 80,
-                'tanggal' => '2027-01-15',
-            ],
-            [
-                'promotor_id' => $nusantara->id,
-                'nama' => 'Dewa 19 - Pesta Rakyat',
-                'kota' => 'Surabaya',
-                'harga' => 450000,
-                'sisa' => 50,
-                'tanggal' => '2027-01-20',
-            ],
-            [
-                'promotor_id' => $nusantara->id,
-                'nama' => 'Festival Musik Pantai',
-                'kota' => 'Bali',
-                'harga' => 600000,
-                'sisa' => 8,
-                'tanggal' => '2027-01-25',
-            ],
-            [
-                'promotor_id' => $harmoni->id,
-                'nama' => 'Malam Akustik Kota',
-                'kota' => 'Bandung',
-                'harga' => 250000,
-                'sisa' => 60,
-                'tanggal' => '2027-01-30',
-            ],
-        ];
+        $harmoni = Promotor::create([
+            'nama' => 'Harmoni Entertainment',
+            'kontak' => 'info@harmoni.test',
+        ]);
 
-        foreach ($konser as $data) {
-            Konser::firstOrCreate(['nama' => $data['nama']], $data);
-        }
+        $jogja = Promotor::create([
+            'nama' => 'Jogja Sound Project',
+            'kontak' => 'halo@jogjasound.test',
+        ]);
+
+        Konser::create([
+            'promotor_id' => $nusantara->id,
+            'nama' => 'Coldplay - Music of the Spheres',
+            'kota' => 'Jakarta',
+            'harga' => 1500000,
+            'sisa' => 25,
+            'tanggal' => '2027-03-15',
+        ]);
+
+        Konser::create([
+            'promotor_id' => $nusantara->id,
+            'nama' => 'NCT Dream - The Dream Show',
+            'kota' => 'Jakarta',
+            'harga' => 1200000,
+            'sisa' => 0,
+            'tanggal' => '2027-04-02',
+        ]);
+
+        Konser::create([
+            'promotor_id' => $jogja->id,
+            'nama' => 'Dewa 19 - Pesta Rakyat',
+            'kota' => 'Yogyakarta',
+            'harga' => 450000,
+            'sisa' => 120,
+            'tanggal' => '2027-02-20',
+        ]);
+
+        Konser::create([
+            'promotor_id' => $harmoni->id,
+            'nama' => 'Festival Musik Pantai',
+            'kota' => 'Bali',
+            'harga' => 600000,
+            'sisa' => 8,
+            'tanggal' => '2027-05-10',
+        ]);
+
+        Konser::create([
+            'promotor_id' => $harmoni->id,
+            'nama' => 'Malam Akustik Kota',
+            'kota' => 'Bandung',
+            'harga' => 250000,
+            'sisa' => 60,
+            'tanggal' => '2027-01-30',
+        ]);
+
+        // Menjalankan seeder pesanan setelah data konser dibuat
+        $this->call(PesananSeeder::class);
     }
 }

@@ -1,51 +1,92 @@
+
 @extends('layouts.main')
 
 @section('title', 'Daftar Konser')
 
 @section('content')
-    <h1 class="h2 fw-bold mb-4">Daftar Konser</h1>
+    <h1 class="mb-3">Daftar Konser</h1>
 
-    <div class="card border-0 shadow-sm">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-primary">
-                    <tr>
-                        <th>Nama Konser</th>
-                        <th>Promotor</th>
-                        <th>Kota</th>
-                        <th>Tanggal</th>
-                        <th>Harga</th>
-                        <th>Sisa Tiket</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($daftarKonser as $konser)
-                        <tr>
-                            <td>
-                                <a class="fw-semibold text-decoration-none"
-                                   href="{{ route('konser.detail', ['id' => $konser->id]) }}">
-                                    {{ $konser->nama }}
-                                </a>
-                            </td>
-                            <td>{{ $konser->promotor->nama }}</td>
-                            <td>{{ $konser->kota }}</td>
-                            <td>{{ $konser->tanggal }}</td>
-                            <td>Rp{{ number_format($konser->harga, 0, ',', '.') }}</td>
-                            <td>
-                                @if ($konser->sisa > 0)
-                                    <span class="badge text-bg-success">{{ $konser->sisa }} tiket</span>
-                                @else
-                                    <span class="badge text-bg-secondary">Sold Out</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-4">Belum ada konser.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <a href="{{ route('konser.create') }}" class="btn btn-success mb-3">
+        + Tambah Konser
+    </a>
+
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>No</th>
+                <th>Konser</th>
+                <th>Promotor</th>
+                <th>Kota</th>
+                <th>Tanggal</th>
+                <th>Harga</th>
+                <th>Sisa</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @forelse ($daftarKonser as $konser)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+
+                    <td class="{{ $konser->sisa == 0 ? 'sold-out' : '' }}">
+                        {{ $konser->nama }}
+                    </td>
+
+                    <td>{{ $konser->promotor->nama }}</td>
+
+                    <td>{{ $konser->kota }}</td>
+
+                    <td>{{ date('d-m-Y', strtotime($konser->tanggal)) }}</td>
+
+                    <td>
+                        Rp{{ number_format($konser->harga, 0, ',', '.') }}
+                    </td>
+
+                    <td>{{ $konser->sisa }}</td>
+
+                    <td>
+                        @if ($konser->sisa > 10)
+                            <span class="badge bg-success">Tersedia</span>
+                        @elseif ($konser->sisa > 0)
+                            <span class="badge bg-warning text-dark">Hampir habis</span>
+                        @else
+                            <span class="badge bg-danger">Sold Out</span>
+                        @endif
+                    </td>
+
+                    <td>
+                        <a href="{{ route('konser.detail', ['id' => $konser->id]) }}"
+                           class="btn btn-sm btn-primary mb-1">
+                            Detail
+                        </a>
+
+                        <a href="{{ route('konser.edit', ['id' => $konser->id]) }}"
+                           class="btn btn-sm btn-warning mb-1">
+                            Edit
+                        </a>
+
+                        <form action="{{ route('konser.destroy', ['id' => $konser->id]) }}"
+                              method="POST"
+                              class="d-inline"
+                              onsubmit="return confirm('Hapus konser ini?')">
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit" class="btn btn-sm btn-danger mb-1">
+                                Hapus
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="9" class="text-center">
+                        Belum ada konser.
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 @endsection

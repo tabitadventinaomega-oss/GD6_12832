@@ -1,25 +1,45 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $konser->nama }} | TiketWar</title>
-</head>
-<body>
-    <h1>{{ $konser->nama }}</h1>
+@extends('layouts.main')
 
-    <p>Promotor: {{ $konser->promotor->nama }}</p>
-    <p>Kota: {{ $konser->kota }}</p>
-    <p>Tanggal: {{ $konser->tanggal }}</p>
-    <p>Harga: Rp{{ number_format($konser->harga, 0, ',', '.') }}</p>
-    <p>Sisa tiket: {{ $konser->sisa }}</p>
+@section('title', $konser->nama)
 
-    @if ($konser->sisa > 0)
-        <a href="{{ route('pesanan.create', $konser) }}">War Tiket Sekarang</a>
-    @else
-        <button type="button" disabled>Sold Out</button>
-    @endif
+@section('content')
+    <a href="{{ route('konser.index') }}"
+       class="btn btn-outline-secondary mb-3">
+        &larr; Kembali ke daftar
+    </a>
 
-    <a href="{{ route('konser.index') }}">Kembali ke Daftar Konser</a>
-</body>
-</html>
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title h3">{{ $konser->nama }}</h1>
+
+            <p class="text-muted mb-1">
+                Promotor: {{ $konser->promotor->nama }}
+            </p>
+
+            <p class="text-muted mb-1">
+                Kota: {{ $konser->kota }}
+            </p>
+
+            <p class="mb-1">
+                Tanggal: {{ date('d-m-Y', strtotime($konser->tanggal)) }}
+            </p>
+
+            <p class="mb-1">
+                Harga: Rp{{ number_format($konser->harga, 0, ',', '.') }}
+            </p>
+
+            <p>Sisa tiket: {{ $konser->sisa }}</p>
+
+            @if ($konser->sisa > 0)
+                <a href="{{ route('pesanan.create', ['konser' => $konser->id]) }}"
+                   class="btn btn-primary">
+                    War Tiket Sekarang
+                </a>
+            @else
+                <button class="btn btn-secondary" disabled>
+                    Sold Out
+                </button>
+            @endif
+        </div>
+    </div>
+@endsection

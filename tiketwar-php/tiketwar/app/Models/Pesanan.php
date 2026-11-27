@@ -18,7 +18,7 @@ class Pesanan extends Model
         'jumlah',
         'harga_satuan',
         'total',
-        'status',
+        'status'
     ];
 
     public function konser(): BelongsTo

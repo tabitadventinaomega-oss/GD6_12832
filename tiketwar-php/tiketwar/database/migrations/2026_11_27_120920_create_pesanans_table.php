@@ -10,13 +10,18 @@ return new class extends Migration
     {
         Schema::create('pesanans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('konser_id')->constrained()->restrictOnDelete();
+            $table->foreignId('konser_id')
+                ->constrained()
+                ->restrictOnDelete();
+
             $table->string('nama_pemesan');
             $table->string('email');
             $table->unsignedInteger('jumlah');
             $table->unsignedInteger('harga_satuan');
             $table->unsignedBigInteger('total');
-            $table->string('status', 20)->default('menunggu_bayar');
+            $table->string('status', 20)
+                ->default('menunggu_bayar');
+
             $table->timestamps();
         });
     }
